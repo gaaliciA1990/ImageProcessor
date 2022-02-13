@@ -1,10 +1,8 @@
 package com.img_processor.plugins
 
-import com.img_processor.ImgManipulators.DegreeRotate
 import com.img_processor.ImgManipulators.ManipulateImage
 import com.sksamuel.scrimage.ImmutableImage
 import com.sksamuel.scrimage.nio.JpegWriter
-import com.sksamuel.scrimage.nio.PngWriter
 import io.ktor.server.routing.*
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -33,13 +31,16 @@ fun Application.configureRouting() {
                 if (degree != null) {
                     //Check the value of degree to determine which direction to rotate
                     if (degree != 0) {
-                        var rotatedImg = ManipulateImage(image)
+                        // rotate image
+                        val rotatedImg = ManipulateImage(image)
                         rotatedImg.RotateImage(degree)
 
-                        call.respondText("Image successfully rotated")
+                        // convert rotate image to byte array
+                        val returnedImg = ConvertToByteArray(rotatedImg.image)
+                        call.respondBytes(returnedImg)
                     }
                     else {
-                        call.respondText("No rotation")
+                        call.respondBytes(ConvertToByteArray(image))
                     }
                 }
                 else {
