@@ -66,7 +66,7 @@ fun Application.configureRouting() {
             }
 
             // access for adding grayscale to image
-            post(ConstantAPI.API_GRAY) {
+            get(ConstantAPI.API_GRAY) {
                 call.respondText("Add grayscale")
             }
 
