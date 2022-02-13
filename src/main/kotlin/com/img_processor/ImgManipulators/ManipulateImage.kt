@@ -2,6 +2,7 @@ package com.img_processor.ImgManipulators
 
 import com.sksamuel.scrimage.*
 import com.sksamuel.scrimage.angles.Degrees
+import com.sksamuel.scrimage.color.Grayscale
 
 /**
  * Author: Alicia Garcia
@@ -44,7 +45,7 @@ class ManipulateImage(val image: ImmutableImage) {
     }
 
     fun convertToGrayscale(): ImmutableImage {
-        image.filter()
+        val filteredImg = image.filter(Grayscale(5))
     }
 
 }

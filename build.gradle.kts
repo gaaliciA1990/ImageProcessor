@@ -25,4 +25,5 @@ dependencies {
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
     implementation("com.sksamuel.scrimage:scrimage-core:4.0.24")
+    implementation("com.sksamuel.scrimage:scrimage-filters:4.0.24")
 }
