@@ -8,6 +8,7 @@ import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.request.*
+import kotlin.text.Typography.degree
 
 
 /**
@@ -35,8 +36,9 @@ fun Application.configureRouting() {
                         val rotatedImg = ManipulateImage(image)
                         rotatedImg.RotateImage(degree)
 
-                        // convert rotate image to byte array
+                        // convert rotated image to byte array
                         val returnedImg = ConvertToByteArray(rotatedImg.image)
+
                         call.respondBytes(returnedImg)
                     }
                     else {
@@ -50,6 +52,8 @@ fun Application.configureRouting() {
 
             // access for rotating left or right 90degrees
             post(ConstantAPI.API_ROTATE90){
+                val image = ConvertToImmutableImage(call)
+
                 // parameters for rotation left or right
                 val direction = call.request.queryParameters["direction"]
 
@@ -58,10 +62,26 @@ fun Application.configureRouting() {
                     // otherwise, return a bad request error
                     when (direction) {
                         "left" -> {
-                            call.respondText("Rotating image left")
+                            // rotate image
+                            val rotatedImg = ManipulateImage(image)
+                            rotatedImg.RotateCounterClockwise()
+
+                            // convert rotated image to byte array
+
+                            val returnedImg = ConvertToByteArray(rotatedImg.image)
+
+                            call.respondBytes(returnedImg)
                         }
                         "right" -> {
-                            call.respondText("Rotating image right")
+                            // rotate image
+                            val rotatedImg = ManipulateImage(image)
+                            rotatedImg.RotateClockwise()
+
+                            // convert rotated image to byte array
+                            val returnedImg = ConvertToByteArray(rotatedImg.image)
+
+                            call.respondBytes(returnedImg)
+
                         }
                         else -> {
                             call.response.status(HttpStatusCode.BadRequest)
