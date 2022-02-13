@@ -1,7 +1,10 @@
 package com.img_processor.plugins
 
 import com.img_processor.ImgManipulators.DegreeRotate
+import com.img_processor.ImgManipulators.ManipulateImage
 import com.sksamuel.scrimage.ImmutableImage
+import com.sksamuel.scrimage.nio.JpegWriter
+import com.sksamuel.scrimage.nio.PngWriter
 import io.ktor.server.routing.*
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -21,7 +24,7 @@ fun Application.configureRouting() {
             // access for rotate any degree
             post(ConstantAPI.API_ROTATE) {
                 // upload the image to be manipulated
-                val image = ImageUpload(call)
+                val image = ConvertToImmutableImage(call)
 
                 // store the passed value for degrees and convert to an integer
                 // If unable to convert to int, return null
@@ -30,7 +33,9 @@ fun Application.configureRouting() {
                 if (degree != null) {
                     //Check the value of degree to determine which direction to rotate
                     if (degree != 0) {
-                        DegreeRotate(image, degree)
+                        var rotatedImg = ManipulateImage(image)
+                        rotatedImg.RotateImage(degree)
+
                         call.respondText("Image successfully rotated")
                     }
                     else {
@@ -91,7 +96,7 @@ fun Application.configureRouting() {
 /**
  * Co-routine to upload the image for manipulation
  */
-suspend fun ImageUpload(call: ApplicationCall): ImmutableImage {
+suspend fun ConvertToImmutableImage(call: ApplicationCall): ImmutableImage {
     // channel to read the image bytes from
     val image = call.receiveChannel()
 
@@ -105,4 +110,14 @@ suspend fun ImageUpload(call: ApplicationCall): ImmutableImage {
 
     // Save file to hard disk
     return ImmutableImage.loader().fromBytes(byteArray)
+}
+
+/**
+ * Convert [image] to a bytearray for rendering
+ *
+ * Returns a ByteArray
+ */
+fun ConvertToByteArray(image: ImmutableImage): ByteArray {
+
+    return image.bytes(JpegWriter.Default)
 }
