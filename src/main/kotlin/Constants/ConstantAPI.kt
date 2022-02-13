@@ -1,8 +1,12 @@
 /**
+ * Author: Alicia Garcia
+ * Version: 1.0
+ * Date: 2/12/2022 19:37
+ *
  * Constants for API paths and details
  */
-object ConstantsAPI {
 
+object  ConstantAPI {
     const val PORT = 8080
     const val HOST = "0.0.0.0"
 

@@ -8,7 +8,7 @@ import com.img_processor.plugins.*
  * Server class for managing service calls
  */
 fun main() {
-    embeddedServer(Netty, port = 8080, host = "0.0.0.0") {
+    embeddedServer(Netty, port = ConstantAPI.PORT, host = ConstantAPI.HOST) {
         configureRouting()
     }.start(wait = true)
 }

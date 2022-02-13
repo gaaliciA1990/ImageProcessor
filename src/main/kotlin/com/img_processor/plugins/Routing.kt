@@ -17,9 +17,9 @@ fun Application.configureRouting() {
     // Starting point for a Ktor app:
     routing {
         //set default route mapping
-        route("/api/image"){
+        route(ConstantAPI.API_PATH){
             // access for rotate any degree
-            post("/rotate") {
+            post(ConstantAPI.API_ROTATE) {
                 // upload the image to be manipulated
                 val image = ImageUpload(call)
 
@@ -43,7 +43,7 @@ fun Application.configureRouting() {
             }
 
             // access for rotating left or right 90degrees
-            post("/rotate90"){
+            post(ConstantAPI.API_ROTATE90){
                 // parameters for rotation left or right
                 val direction = call.request.queryParameters["direction"]
 
@@ -66,22 +66,22 @@ fun Application.configureRouting() {
             }
 
             // access for adding grayscale to image
-            post("/grayscale") {
+            post(ConstantAPI.API_GRAY) {
                 call.respondText("Add grayscale")
             }
 
             // access for resize image
-            post("/resize") {
+            post(ConstantAPI.API_RESIZE) {
                 call.respondText("Image resize")
             }
 
             // access for converting image to a thumbnail size
-            post("/thumbnail") {
+            post(ConstantAPI.API_THUMBNAIL) {
                 call.respondText("Image thumbnail")
             }
 
             // access for flipping image
-            post("/flip") {
+            post(ConstantAPI.API_FLIP) {
                 call.respondText("Flip horizontally or vertically")
             }
         }
