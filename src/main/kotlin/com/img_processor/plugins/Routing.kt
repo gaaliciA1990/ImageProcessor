@@ -8,7 +8,6 @@ import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.request.*
-import kotlin.text.Typography.degree
 
 
 /**
@@ -23,7 +22,7 @@ fun Application.configureRouting() {
             // access for rotate any degree
             post(ConstantAPI.API_ROTATE) {
                 // upload the image to be manipulated
-                val image = ConvertToImmutableImage(call)
+                val image = convertToImmutableImage(call)
 
                 // store the passed value for degrees and convert to an integer
                 // If unable to convert to int, return null
@@ -34,15 +33,15 @@ fun Application.configureRouting() {
                     if (degree != 0) {
                         // rotate image
                         val rotatedImg = ManipulateImage(image)
-                        rotatedImg.RotateImage(degree)
+                        rotatedImg.rotateImage(degree)
 
                         // convert rotated image to byte array
-                        val returnedImg = ConvertToByteArray(rotatedImg.image)
+                        val returnedImg = convertToByteArray(rotatedImg.image)
 
                         call.respondBytes(returnedImg)
                     }
                     else {
-                        call.respondBytes(ConvertToByteArray(image))
+                        call.respondBytes(convertToByteArray(image))
                     }
                 }
                 else {
@@ -52,7 +51,7 @@ fun Application.configureRouting() {
 
             // access for rotating left or right 90degrees
             post(ConstantAPI.API_ROTATE90){
-                val image = ConvertToImmutableImage(call)
+                val image = convertToImmutableImage(call)
 
                 // parameters for rotation left or right
                 val direction = call.request.queryParameters["direction"]
@@ -64,21 +63,21 @@ fun Application.configureRouting() {
                         "left" -> {
                             // rotate image
                             val rotatedImg = ManipulateImage(image)
-                            rotatedImg.RotateCounterClockwise()
+                            rotatedImg.rotateCounterClockwise()
 
                             // convert rotated image to byte array
 
-                            val returnedImg = ConvertToByteArray(rotatedImg.image)
+                            val returnedImg = convertToByteArray(rotatedImg.image)
 
                             call.respondBytes(returnedImg)
                         }
                         "right" -> {
                             // rotate image
                             val rotatedImg = ManipulateImage(image)
-                            rotatedImg.RotateClockwise()
+                            rotatedImg.rotateClockwise()
 
                             // convert rotated image to byte array
-                            val returnedImg = ConvertToByteArray(rotatedImg.image)
+                            val returnedImg = convertToByteArray(rotatedImg.image)
 
                             call.respondBytes(returnedImg)
 
@@ -117,7 +116,7 @@ fun Application.configureRouting() {
 /**
  * Co-routine to upload the image for manipulation
  */
-suspend fun ConvertToImmutableImage(call: ApplicationCall): ImmutableImage {
+suspend fun convertToImmutableImage(call: ApplicationCall): ImmutableImage {
     // channel to read the image bytes from
     val image = call.receiveChannel()
 
@@ -138,7 +137,7 @@ suspend fun ConvertToImmutableImage(call: ApplicationCall): ImmutableImage {
  *
  * Returns a ByteArray
  */
-fun ConvertToByteArray(image: ImmutableImage): ByteArray {
+fun convertToByteArray(image: ImmutableImage): ByteArray {
 
     return image.bytes(JpegWriter.Default)
 }

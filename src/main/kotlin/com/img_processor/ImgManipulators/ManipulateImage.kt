@@ -2,7 +2,6 @@ package com.img_processor.ImgManipulators
 
 import com.sksamuel.scrimage.*
 import com.sksamuel.scrimage.angles.Degrees
-import com.sksamuel.scrimage.color.Grayscale
 
 /**
  * Author: Alicia Garcia
@@ -21,7 +20,7 @@ class ManipulateImage(val image: ImmutableImage) {
      *
      * Return the manipulated [image]
      */
-    fun RotateImage(degree: Int): ImmutableImage {
+    fun rotateImage(degree: Int): ImmutableImage {
         //rotate the image based on calculate radian value
         return image.rotate(Degrees(degree))
     }
@@ -31,7 +30,7 @@ class ManipulateImage(val image: ImmutableImage) {
      *
      * Return the manipulated [image]
      */
-    fun RotateClockwise(): ImmutableImage {
+    fun rotateClockwise(): ImmutableImage {
         return image.rotateRight()
     }
 
@@ -40,12 +39,12 @@ class ManipulateImage(val image: ImmutableImage) {
      *
      * Return the manipulated [image]
      */
-    fun RotateCounterClockwise(): ImmutableImage {
+    fun rotateCounterClockwise(): ImmutableImage {
         return image.rotateLeft()
     }
 
-    fun ConvertToGrayscale(): ImmutableImage {
-        image.filter(DitherFilter())
+    fun convertToGrayscale(): ImmutableImage {
+        image.filter()
     }
 
 }
