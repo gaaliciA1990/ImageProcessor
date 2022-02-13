@@ -29,7 +29,8 @@ class DegreeRotate(val image: ImmutableImage, val degree: Int) {
     }
 
     /**
-     * Convert the passed degree value to radians
+     * Convert the passed degree value to radians using the
+     * standard equation
      */
     private fun ConvertDegreeToRads(degree: Int): Double {
         val rads = (degree * (PI / 180))
