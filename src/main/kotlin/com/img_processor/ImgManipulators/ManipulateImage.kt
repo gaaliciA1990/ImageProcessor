@@ -44,8 +44,44 @@ class ManipulateImage(val image: ImmutableImage) {
         return image.rotateLeft()
     }
 
+    /**
+     * Add a grayscale filter to the image using the
+     * scrimage Grayscale filter model
+     *
+     * Return the filter [image]
+     */
     fun convertToGrayscale(): ImmutableImage {
         return image.filter(GrayscaleFilter())
     }
 
+    /**
+     * Scale the image based on the values for width and height passed
+     * through. This is resizing as people want, but without cropping
+     * the image.
+     *
+     * Return the scaled [image]
+     */
+    fun resizeImage(width:Int, height:Int): ImmutableImage {
+        return image.scaleTo(width, height)
+    }
+
+    /**
+     * Scale the image based on the value for width passed
+     * through without cropping the image.
+     *
+     * Return the scaled [image]
+     */
+    fun resizeImageWidth(width:Int): ImmutableImage {
+        return image.scaleToWidth(width)
+    }
+
+    /**
+     * Scale the image based on the value for height passed
+     * through without cropping the image.
+     *
+     * Return the scaled [image]
+     */
+    fun resizeImageHeight(height:Int): ImmutableImage {
+        return image.scaleToHeight(height)
+    }
 }

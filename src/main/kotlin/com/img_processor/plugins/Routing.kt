@@ -87,7 +87,7 @@ fun Application.configureRouting() {
                 }
             }
 
-            // access call for adding grayscale to image
+            // access call for adding grayscale filter to image
             post(ConstantAPI.API_GRAY) {
                 val image = convertToImmutableImage(call)
 
@@ -104,9 +104,43 @@ fun Application.configureRouting() {
                 }
             }
 
-            // access call for resize image
+            // access call for resize image based on width and height values, optionally
             post(ConstantAPI.API_RESIZE) {
-                call.respondText("Image resize")
+                val image = convertToImmutableImage(call)
+
+                // store parameter for width and height as integers
+                val width = call.request.queryParameters["width"]?.toIntOrNull()
+                val height = call.request.queryParameters["height"]?.toIntOrNull()
+
+                val img = ManipulateImage(image)
+
+                if (width == null && height == null) {
+                    call.response.status(HttpStatusCode.BadRequest)
+                }
+                else if (width != null && height != null) {
+                    val resizedImg = img.resizeImage(width, height)
+
+                    // convert resized image to bytes
+                    val returnedImg = convertToByteArray(resizedImg)
+
+                    call.respondBytes(returnedImg)
+                }
+                else if (height !=null) {
+                    val resizedImg = img.resizeImageHeight(height)
+
+                    // covert resized image to bytes
+                    val returnedImg = convertToByteArray(resizedImg)
+
+                    call.respondBytes(returnedImg)
+                }
+                else {
+                    val resizedImg = img.resizeImageWidth(requireNotNull(width))
+
+                    // covert resized image to bytes
+                    val returnedImg = convertToByteArray(resizedImg)
+
+                    call.respondBytes(returnedImg)
+                }
             }
 
             // access call for converting image to a thumbnail size
