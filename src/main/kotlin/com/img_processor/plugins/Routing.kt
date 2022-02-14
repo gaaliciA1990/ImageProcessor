@@ -62,21 +62,21 @@ fun Application.configureRouting() {
                     when (direction) {
                         "left" -> {
                             // rotate image
-                            val rotatedImg = ManipulateImage(image)
-                            rotatedImg.rotateCounterClockwise()
+                            val img = ManipulateImage(image)
+                            val rotatedImg = img.rotateCounterClockwise()
 
                             // convert rotated image to byte array
-                            val returnedImg = convertToByteArray(rotatedImg.image)
+                            val returnedImg = convertToByteArray(rotatedImg)
 
                             call.respondBytes(returnedImg)
                         }
                         "right" -> {
                             // rotate image
-                            val rotatedImg = ManipulateImage(image)
-                            rotatedImg.rotateClockwise()
+                            val img = ManipulateImage(image)
+                            val rotatedImg = img.rotateClockwise()
 
                             // convert rotated image to byte array
-                            val returnedImg = convertToByteArray(rotatedImg.image)
+                            val returnedImg = convertToByteArray(rotatedImg)
 
                             call.respondBytes(returnedImg)
                         }
@@ -88,7 +88,7 @@ fun Application.configureRouting() {
             }
 
             // access call for adding grayscale to image
-            get(ConstantAPI.API_GRAY) {
+            post(ConstantAPI.API_GRAY) {
                 val image = convertToImmutableImage(call)
 
                 if (image != null) {
@@ -97,20 +97,24 @@ fun Application.configureRouting() {
 
                     // convert filtered image to byte array
                     val returnedImg = convertToByteArray(filterImg.toImmutableImage())
+                    call.respondBytes(returnedImg)
+                }
+                else {
+                    call.response.status(HttpStatusCode.BadRequest)
                 }
             }
 
-            // access for resize image
+            // access call for resize image
             post(ConstantAPI.API_RESIZE) {
                 call.respondText("Image resize")
             }
 
-            // access for converting image to a thumbnail size
+            // access call for converting image to a thumbnail size
             post(ConstantAPI.API_THUMBNAIL) {
                 call.respondText("Image thumbnail")
             }
 
-            // access for flipping image
+            // access call for flipping image
             post(ConstantAPI.API_FLIP) {
                 call.respondText("Flip horizontally or vertically")
             }
