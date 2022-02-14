@@ -22,7 +22,7 @@ fun Application.configureRouting() {
             // access call for rotate any degree
             post(ConstantAPI.API_ROTATE) {
                 // upload the image to be manipulated
-                val image = convertToImmutableImage(call)
+                val uploadedImage = convertToImmutableImage(call)
 
                 // store the passed value for degrees and convert to an integer
                 // If unable to convert to int, return null
@@ -32,16 +32,17 @@ fun Application.configureRouting() {
                     //Check the value of degree to determine which direction to rotate
                     if (degree != 0) {
                         // rotate image
-                        val rotatedImg = ManipulateImage(image)
-                        rotatedImg.rotateImage(degree)
+                        val rotatedImage = ManipulateImage(uploadedImage)
+                        rotatedImage.rotateImage(degree)
 
                         // convert rotated image to byte array
-                        val returnedImg = convertToByteArray(rotatedImg.image)
+                        val returnedImage = convertToByteArray(rotatedImage.image)
 
-                        call.respondBytes(returnedImg)
+                        call.respondBytes(returnedImage)
                     }
                     else {
-                        call.respondBytes(convertToByteArray(image))
+                        // if no value passed, do nothing and return the same image
+                        call.respondBytes(convertToByteArray(uploadedImage))
                     }
                 }
                 else {
@@ -51,7 +52,7 @@ fun Application.configureRouting() {
 
             // access call for rotating left or right 90degrees
             post(ConstantAPI.API_ROTATE90){
-                val image = convertToImmutableImage(call)
+                val uploadedImage = convertToImmutableImage(call)
 
                 // parameters for rotation left or right
                 val direction = call.request.queryParameters["direction"]
@@ -62,23 +63,23 @@ fun Application.configureRouting() {
                     when (direction) {
                         "left" -> {
                             // rotate image
-                            val img = ManipulateImage(image)
-                            val rotatedImg = img.rotateCounterClockwise()
+                            val image = ManipulateImage(uploadedImage)
+                            val rotatedImage = image.rotateCounterClockwise()
 
                             // convert rotated image to byte array
-                            val returnedImg = convertToByteArray(rotatedImg)
+                            val returnedImage = convertToByteArray(rotatedImage)
 
-                            call.respondBytes(returnedImg)
+                            call.respondBytes(returnedImage)
                         }
                         "right" -> {
                             // rotate image
-                            val img = ManipulateImage(image)
-                            val rotatedImg = img.rotateClockwise()
+                            val image = ManipulateImage(uploadedImage)
+                            val rotatedImage = image.rotateClockwise()
 
                             // convert rotated image to byte array
-                            val returnedImg = convertToByteArray(rotatedImg)
+                            val returnedImage = convertToByteArray(rotatedImage)
 
-                            call.respondBytes(returnedImg)
+                            call.respondBytes(returnedImage)
                         }
                         else -> {
                             call.response.status(HttpStatusCode.BadRequest)
@@ -89,15 +90,15 @@ fun Application.configureRouting() {
 
             // access call for adding grayscale filter to image
             post(ConstantAPI.API_GRAY) {
-                val image = convertToImmutableImage(call)
+                val uploadedImage = convertToImmutableImage(call)
 
-                if (image != null) {
-                    val img = ManipulateImage(image)
-                    val filterImg = img.convertToGrayscale()
+                if (uploadedImage != null) {
+                    val image = ManipulateImage(uploadedImage)
+                    val filteredImage = image.convertToGrayscale()
 
                     // convert filtered image to byte array
-                    val returnedImg = convertToByteArray(filterImg.toImmutableImage())
-                    call.respondBytes(returnedImg)
+                    val returnedImage = convertToByteArray(filteredImage.toImmutableImage())
+                    call.respondBytes(returnedImage)
                 }
                 else {
                     call.response.status(HttpStatusCode.BadRequest)
@@ -105,47 +106,55 @@ fun Application.configureRouting() {
             }
 
             // access call for resize image based on width and height values, optionally
+            // based on pixel size
             post(ConstantAPI.API_RESIZE) {
-                val image = convertToImmutableImage(call)
+                val uploadedImage = convertToImmutableImage(call)
 
                 // store parameter for width and height as integers
                 val width = call.request.queryParameters["width"]?.toIntOrNull()
                 val height = call.request.queryParameters["height"]?.toIntOrNull()
 
-                val img = ManipulateImage(image)
+                val image = ManipulateImage(uploadedImage)
 
                 if (width == null && height == null) {
                     call.response.status(HttpStatusCode.BadRequest)
                 }
                 else if (width != null && height != null) {
-                    val resizedImg = img.resizeImage(width, height)
+                    val resizedImage = image.resizeImage(width, height)
 
                     // convert resized image to bytes
-                    val returnedImg = convertToByteArray(resizedImg)
+                    val returnedImage = convertToByteArray(resizedImage)
 
-                    call.respondBytes(returnedImg)
+                    call.respondBytes(returnedImage)
                 }
                 else if (height !=null) {
-                    val resizedImg = img.resizeImageHeight(height)
+                    val resizedImage = image.resizeImageHeight(height)
 
                     // covert resized image to bytes
-                    val returnedImg = convertToByteArray(resizedImg)
+                    val returnedImage = convertToByteArray(resizedImage)
 
-                    call.respondBytes(returnedImg)
+                    call.respondBytes(returnedImage)
                 }
                 else {
-                    val resizedImg = img.resizeImageWidth(requireNotNull(width))
+                    val resizedImage = image.resizeImageWidth(requireNotNull(width))
 
                     // covert resized image to bytes
-                    val returnedImg = convertToByteArray(resizedImg)
+                    val returnedImage = convertToByteArray(resizedImage)
 
-                    call.respondBytes(returnedImg)
+                    call.respondBytes(returnedImage)
                 }
             }
 
             // access call for converting image to a thumbnail size
             post(ConstantAPI.API_THUMBNAIL) {
-                call.respondText("Image thumbnail")
+                val uploadedImage = convertToImmutableImage(call)
+
+                val image = ManipulateImage(uploadedImage)
+                val thumbnailImage = image.resizeImageToThumbnail()
+
+                // convert thumbnail image to Bytes
+                val returnedImage = convertToByteArray(thumbnailImage)
+                call.respondBytes(returnedImage)
             }
 
             // access call for flipping image

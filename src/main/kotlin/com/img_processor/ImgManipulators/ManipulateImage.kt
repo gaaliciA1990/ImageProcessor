@@ -57,7 +57,7 @@ class ManipulateImage(val image: ImmutableImage) {
     /**
      * Scale the image based on the values for width and height passed
      * through. This is resizing as people want, but without cropping
-     * the image.
+     * the image. Using pixel size
      *
      * Return the scaled [image]
      */
@@ -67,7 +67,7 @@ class ManipulateImage(val image: ImmutableImage) {
 
     /**
      * Scale the image based on the value for width passed
-     * through without cropping the image.
+     * through without cropping the image. Using pixel size
      *
      * Return the scaled [image]
      */
@@ -77,11 +77,24 @@ class ManipulateImage(val image: ImmutableImage) {
 
     /**
      * Scale the image based on the value for height passed
-     * through without cropping the image.
+     * through without cropping the image. Using pixel size
      *
      * Return the scaled [image]
      */
     fun resizeImageHeight(height:Int): ImmutableImage {
         return image.scaleToHeight(height)
     }
+
+    /**
+     * Scale the image to a thumbnail size of 100 x 100 pixels
+     *
+     * Return the thumbnail [image]
+     */
+    fun resizeImageToThumbnail(): ImmutableImage {
+        val width = 100
+        val height = 100
+
+        return image.scaleTo(width, height)
+    }
+
 }
