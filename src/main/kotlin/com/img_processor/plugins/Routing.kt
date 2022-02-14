@@ -19,7 +19,7 @@ fun Application.configureRouting() {
     routing {
         //set default route mapping
         route(ConstantAPI.API_PATH){
-            // access for rotate any degree
+            // access call for rotate any degree
             post(ConstantAPI.API_ROTATE) {
                 // upload the image to be manipulated
                 val image = convertToImmutableImage(call)
@@ -49,7 +49,7 @@ fun Application.configureRouting() {
                 }
             }
 
-            // access for rotating left or right 90degrees
+            // access call for rotating left or right 90degrees
             post(ConstantAPI.API_ROTATE90){
                 val image = convertToImmutableImage(call)
 
@@ -66,7 +66,6 @@ fun Application.configureRouting() {
                             rotatedImg.rotateCounterClockwise()
 
                             // convert rotated image to byte array
-
                             val returnedImg = convertToByteArray(rotatedImg.image)
 
                             call.respondBytes(returnedImg)
@@ -80,19 +79,25 @@ fun Application.configureRouting() {
                             val returnedImg = convertToByteArray(rotatedImg.image)
 
                             call.respondBytes(returnedImg)
-
                         }
                         else -> {
                             call.response.status(HttpStatusCode.BadRequest)
                         }
                     }
                 }
-                call.respondText("Rotating l or r")
             }
 
-            // access for adding grayscale to image
+            // access call for adding grayscale to image
             get(ConstantAPI.API_GRAY) {
-                call.respondText("Add grayscale")
+                val image = convertToImmutableImage(call)
+
+                if (image != null) {
+                    val img = ManipulateImage(image)
+                    val filterImg = img.convertToGrayscale()
+
+                    // convert filtered image to byte array
+                    val returnedImg = convertToByteArray(filterImg.toImmutableImage())
+                }
             }
 
             // access for resize image

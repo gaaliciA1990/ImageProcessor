@@ -11,6 +11,8 @@ group = "com.img_processor"
 version = "0.0.1"
 application {
     mainClass.set("com.img_processor.ApplicationKt")
+    applicationDefaultJvmArgs = listOf("-Dio.ktor.development=true") // enables dev mode
+
 }
 
 repositories {
