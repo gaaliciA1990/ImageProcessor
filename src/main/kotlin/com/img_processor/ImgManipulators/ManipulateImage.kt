@@ -19,6 +19,7 @@ class ManipulateImage(val image: ImmutableImage) {
      * Rotate the image using the given member variable [image]
      * and [degree]
      *
+     * Todo: update code for handing the rectangle around the image
      * Return the degree rotated [image]
      */
     fun rotateImage(degree: Int): ImmutableImage {
@@ -28,7 +29,6 @@ class ManipulateImage(val image: ImmutableImage) {
         } else {
             image // return unaltered image if value == zero
         }
-
     }
 
     /**

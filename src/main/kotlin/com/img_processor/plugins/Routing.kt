@@ -1,5 +1,6 @@
 package com.img_processor.plugins
 
+import ConstantAPI
 import com.img_processor.ImgManipulators.ManipulateImage
 import com.sksamuel.scrimage.ImageParseException
 import com.sksamuel.scrimage.ImmutableImage
@@ -21,13 +22,18 @@ fun Application.configureRouting() {
     routing {
         //set default route mapping
         route(ConstantAPI.API_PATH) {
+            // call to manipulate an image with all options
+            // Todo: Implement methods for multiple manipulations
+            post {
+
+            }
             // access call for rotate any degree
             post(ConstantAPI.API_ROTATE) {
                 // upload the image to be manipulated
                 val uploadedImage = convertToImmutableImage(call)
 
                 // store the passed value for degrees and convert to an integer
-                // If unable to convert to int, return null
+                // If unable to convert to int, set to null
                 val degree = call.request.queryParameters["degrees"]?.toIntOrNull()
 
                 // verify we have a valid image
@@ -36,7 +42,7 @@ fun Application.configureRouting() {
                     return@post
                 }
 
-                // rotate the image based on teh degress
+                // rotate the image based on the degrees
                 if (degree != null) {
                     // rotate image
                     val rotatedImage = ManipulateImage(uploadedImage)
@@ -195,6 +201,8 @@ fun Application.configureRouting() {
 
 /**
  * Co-routine to upload the image for manipulation
+ * We do not store the image since this would raise security issues,
+ * and I have no need for their images
  */
 suspend fun convertToImmutableImage(call: ApplicationCall): ImmutableImage? {
     // channel to read the image bytes from
@@ -209,10 +217,10 @@ suspend fun convertToImmutableImage(call: ApplicationCall): ImmutableImage? {
     }
 
     // return an immutable image, only if it's a valid image
-    try {
-        return ImmutableImage.loader().fromBytes(byteArray)
+    return try {
+        ImmutableImage.loader().fromBytes(byteArray)
     } catch (exception: ImageParseException) {
-        return null
+        null
     }
 }
 
