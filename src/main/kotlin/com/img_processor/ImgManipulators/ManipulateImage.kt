@@ -1,8 +1,10 @@
 package com.img_processor.ImgManipulators
 
-import com.sksamuel.scrimage.*
+import com.sksamuel.scrimage.ImmutableImage
 import com.sksamuel.scrimage.angles.Degrees
 import com.sksamuel.scrimage.filter.GrayscaleFilter
+import java.awt.image.BufferedImage
+
 
 /**
  * Author: Alicia Garcia
@@ -25,6 +27,26 @@ class ManipulateImage(val image: ImmutableImage) {
     fun rotateImage(degree: Int): ImmutableImage {
         //Check the value of degree to determine which direction to rotate
         return if (degree != 0) {
+            val w: Int = originalImage.getWidth()
+            val h: Int = originalImage.getHeight()
+            val toRad = Math.toRadians(degree.toDouble())
+            val hPrime =
+                (w * Math.abs(Math.sin(toRad)) + h * Math.abs(Math.cos(toRad))).toInt()
+            val wPrime =
+                (h * Math.abs(Math.sin(toRad)) + w * Math.abs(Math.cos(toRad))).toInt()
+
+            val rotatedImage = BufferedImage(wPrime, hPrime, BufferedImage.TYPE_INT_RGB)
+            val g = rotatedImage.createGraphics()
+            g.color = Color.LIGHT_GRAY
+            g.fillRect(0, 0, wPrime, hPrime) // fill entire area
+
+            g.translate(wPrime / 2, hPrime / 2)
+            g.rotate(toRad)
+            g.translate(-w / 2, -h / 2)
+            g.drawImage(originalImage, 0, 0, null)
+            g.dispose() // release used resources before g is garbage-collected
+
+            return rotatedImage
             image.rotate(Degrees(degree))
         } else {
             image // return unaltered image if value == zero
