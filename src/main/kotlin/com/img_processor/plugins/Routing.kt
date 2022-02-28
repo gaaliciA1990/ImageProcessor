@@ -1,13 +1,11 @@
 package com.img_processor.plugins
 
 import ConstantAPI
-import com.img_processor.ImgManipulators.ManipulateImage
 import com.sksamuel.scrimage.ImageParseException
 import com.sksamuel.scrimage.ImmutableImage
 import com.sksamuel.scrimage.nio.JpegWriter
 import io.ktor.server.routing.*
 import io.ktor.http.*
-import io.ktor.http.HttpHeaders.If
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.request.*
@@ -17,16 +15,45 @@ import io.ktor.server.request.*
  * Function for mapping the routing for the API
  */
 fun Application.configureRouting() {
+    val controller = ApiController()
 
     // Starting point for a Ktor app:
     routing {
         //set default route mapping
         route(ConstantAPI.API_PATH) {
-            // call to manipulate an image with all options
-            // Todo: Implement methods for multiple manipulations
-            post {
+            // call to manipulate an image with any/all options
+            post(ConstantAPI.API_COMBO) {
+                // upload the image to be manipulated
+                val uploadedImage = convertToImmutableImage(call)
 
+                // verify we have a valid image
+                if (uploadedImage == null) {
+                    call.response.status(HttpStatusCode.BadRequest)
+                    return@post
+                }
+
+                // parse the string of commands to a list of string, based on commas
+                val commands: List<String>? = call.request.queryParameters["combo"]?.split(",")
+
+                // check our commands list is not null.
+                if (commands == null) {
+                    call.response.status(HttpStatusCode.BadRequest)
+                    return@post
+                }
+
+                val validRequest = controller.combinationImage(commands, uploadedImage)
+
+                // verify the commands are valid, return bad request if not
+                if (validRequest == null) {
+                    call.response.status(HttpStatusCode.BadRequest)
+                    return@post
+                } else {
+                    // return manipulated image as a byte
+                    val returnedImage = convertToByteArray(validRequest)
+                    call.respondBytes(returnedImage)
+                }
             }
+
             // access call for rotate any degree
             post(ConstantAPI.API_ROTATE) {
                 // upload the image to be manipulated
@@ -42,17 +69,11 @@ fun Application.configureRouting() {
                     return@post
                 }
 
-                // rotate the image based on the degrees
+                // call api controller to manipulate the image if applicable
                 if (degree != null) {
-                    // rotate image
-                    val rotatedImage = ManipulateImage(uploadedImage)
-                    rotatedImage.rotateImage(degree)
-
-                    // convert rotated image to byte array
-                    val returnedImage = convertToByteArray(rotatedImage.image)
-
+                    // rotate the image by degrees and convert returned image back to bytes
+                    val returnedImage = convertToByteArray(controller.rotateDegreesImage(degree, uploadedImage))
                     call.respondBytes(returnedImage)
-
                 } else {
                     call.response.status(HttpStatusCode.BadRequest)
                 }
@@ -71,15 +92,10 @@ fun Application.configureRouting() {
                     return@post
                 }
 
-                // rotate the image left or right
+                // call api controller to rotate the image left or right
                 if (!direction.isNullOrBlank()) {
-                    // rotate image
-                    val image = ManipulateImage(uploadedImage)
-                    val rotatedImage = image.rotate90LeftOrRight(direction)
-
-                    // convert rotated image to byte array
-                    val returnedImage = convertToByteArray(rotatedImage)
-
+                    // rotate the image left or right and convert rotated image to byte array
+                    val returnedImage = convertToByteArray(controller.rotateImage(direction, uploadedImage))
                     call.respondBytes(returnedImage)
                 } else {
                     call.response.status(HttpStatusCode.BadRequest)
@@ -95,13 +111,8 @@ fun Application.configureRouting() {
                     call.response.status(HttpStatusCode.BadRequest)
                     return@post
                 }
-
-                // filter the image to grayscale
-                val image = ManipulateImage(uploadedImage)
-                val filteredImage = image.convertToGrayscale()
-
-                // convert filtered image to byte array
-                val returnedImage = convertToByteArray(filteredImage.toImmutableImage())
+                // call controller to add grayscaled filter and convert filtered image to byte array
+                val returnedImage = convertToByteArray(controller.grayscaleImage(uploadedImage))
                 call.respondBytes(returnedImage)
             }
 
@@ -120,31 +131,12 @@ fun Application.configureRouting() {
                     return@post
                 }
 
-                val image = ManipulateImage(uploadedImage)
-
                 // resize the image based on width and/or height
                 if (width == null && height == null) {
                     call.response.status(HttpStatusCode.BadRequest)
-                } else if (width != null && height != null) {
-                    val resizedImage = image.resizeImage(width, height)
-
-                    // convert resized image to bytes
-                    val returnedImage = convertToByteArray(resizedImage)
-
-                    call.respondBytes(returnedImage)
-                } else if (height != null) {
-                    val resizedImage = image.resizeImageHeight(height)
-
-                    // covert resized image to bytes
-                    val returnedImage = convertToByteArray(resizedImage)
-
-                    call.respondBytes(returnedImage)
                 } else {
-                    val resizedImage = image.resizeImageWidth(requireNotNull(width))
-
-                    // covert resized image to bytes
-                    val returnedImage = convertToByteArray(resizedImage)
-
+                    // call api controller to resize image and convert image to bytes
+                    val returnedImage = convertToByteArray(controller.resizeImage(width, height, uploadedImage))
                     call.respondBytes(returnedImage)
                 }
             }
@@ -159,12 +151,8 @@ fun Application.configureRouting() {
                     return@post
                 }
 
-                // create thumbnail image
-                val image = ManipulateImage(uploadedImage)
-                val thumbnailImage = image.resizeImageToThumbnail()
-
-                // convert thumbnail image to Bytes
-                val returnedImage = convertToByteArray(thumbnailImage)
+                // call controller to convert image to thumbnail and convert image to bytes
+                val returnedImage = convertToByteArray(controller.thumbnailImage(uploadedImage))
                 call.respondBytes(returnedImage)
             }
 
@@ -182,14 +170,8 @@ fun Application.configureRouting() {
 
                 // flip the image based on direction
                 if (!direction.isNullOrBlank()) {
-                    val image = ManipulateImage(uploadedImage)
-
-                    // flip the image
-                    val flippedImage = image.flipImage(direction)
-
-                    // convert flipped image to byte array
-                    val returnedImage = convertToByteArray(flippedImage)
-
+                    // call controller to flip image and convert image to bytes
+                    val returnedImage = convertToByteArray(controller.flipImage(direction, uploadedImage))
                     call.respondBytes(returnedImage)
                 } else {
                     call.response.status(HttpStatusCode.BadRequest)

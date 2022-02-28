@@ -17,4 +17,6 @@ object  ConstantAPI {
     const val API_RESIZE = "resize"
     const val API_THUMBNAIL = "thumbnail"
     const val API_FLIP = "flip"
+    const val API_COMBO = "combination"
+
 }
