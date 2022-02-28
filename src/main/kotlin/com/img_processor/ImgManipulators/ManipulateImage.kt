@@ -3,7 +3,6 @@ package com.img_processor.ImgManipulators
 import com.sksamuel.scrimage.ImmutableImage
 import com.sksamuel.scrimage.angles.Degrees
 import com.sksamuel.scrimage.filter.GrayscaleFilter
-import java.awt.image.BufferedImage
 
 
 /**
