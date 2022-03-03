@@ -97,7 +97,8 @@ paths:
       parameters:
         - name: direction
           in: query
-          description: 'Requires the direction that you want to rotate the image by 90 degrees. Accepted values are "left" or "right".'
+          description: 'Requires the direction that you want to rotate the image by 90 degrees. Accepted values are
+          "left" or "right".'
           required: true
           schema:
             type: string
@@ -241,7 +242,8 @@ paths:
       parameters:
         - name: direction
           in: query
-          description: 'Requires the direction that you want to flip the image. Accepted values are "horizontal" or "vertical"'
+          description: 'Requires the direction that you want to flip the image. Accepted values are "horizontal" or
+          "vertical"'
           required: true
           schema:
             type: string
