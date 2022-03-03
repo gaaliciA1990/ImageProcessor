@@ -155,7 +155,8 @@ paths:
 
   /api/image/resize:
     post:
-      summary: 'Returns an image resize by pixels based on width and height when called'
+      summary: 'Returns an image resized by pixels based on width and/or height when called. Both are not required, but
+      BadRequest is returned if both are missing'
       operationId: resizeImage
       requestBody:
           description: 'Upload an Image to be manipulated'
@@ -168,13 +169,13 @@ paths:
         - name: width
           in: query
           description: 'Requires the width that you want to resize the image to. Accepted values are numeric only'
-          required: true
+          required: false
           schema:
             type: integer
         - name: height
           in: query
           description: 'Requires the height that you want to resize the image to. Accepted values are numeric only'
-          required: true
+          required: false
           schema:
             type: integer
       responses:
