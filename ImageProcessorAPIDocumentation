@@ -1,0 +1,277 @@
+openapi: 3.0.0
+info:
+  version: '1.0'
+  title: 'Postal Address'
+servers:
+  - url: 'localhost:8080'
+paths:
+  /api/image/combination:
+    post:
+      summary: 'Returns an image that will be manipulated based on the parameters that you enter.'
+      operationId: combinationImage
+      requestBody:
+          description: Upload an Image to be manipulated
+          required: true
+          content:
+            image/*:
+              schema:
+                $ref: "#/components/schemas/Image"
+      parameters:
+        - name: combo
+          in: query
+          required: true
+          description: 'Here you will enter all of the commands you want to have applied to your image. Example of a quey with all commands listed: combo=rotate=left,degree=35,grayscale,resize=25*25,thumbnail,flip=horizontal. Valid values: rotate: "left" or "right", flip: "horizontal" or "vertical", resizie:width*height in pixels'
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 'Manipulated image is returned'
+          content:
+            image/*:
+              schema:
+                $ref: "#/components/schemas/Image"
+        '400':
+          description: 'Invalid parameters passed'
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/Invalid"
+        default:
+          description: 'Invalid request, unrecognized'
+          content:
+            text/plain:
+              schema:
+                type: string
+
+  /api/image/rotate:
+    post:
+      summary: 'Returns an image rotated by degrees when called'
+      operationId: rotateImage
+      requestBody:
+          description: 'Upload an Image to be manipulated'
+          required: true
+          content:
+            image/*:
+              schema:
+                $ref: "#/components/schemas/Image"
+      parameters:
+        - name: degree
+          in: query
+          description: 'Requires the degree that you want to rotate the image. Accepted values are numeric only'
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: 'Manipulated image is returned'
+          content:
+            image/*:
+              schema:
+                $ref: "#/components/schemas/Image"
+        '400':
+          description: 'Invalid parameters passed'
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/Invalid"
+        default:
+          description: 'Invalid request, unrecognized'
+          content:
+            text/plain:
+              schema:
+                type: string
+
+  /api/image/rotate90:
+    post:
+      summary: 'Returns a grayscale filtered image when called'
+      operationId: roate90Image
+      requestBody:
+          description: 'Upload an Image to be manipulated'
+          required: true
+          content:
+            image/*:
+              schema:
+                $ref: "#/components/schemas/Image"
+      parameters:
+        - name: direction
+          in: query
+          description: 'Requires the direction that you want to rotate the image by 90 degrees. Accepted values are "left" or "right".'
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 'Manipulated image is returned'
+          content:
+            image/*:
+              schema:
+                $ref: "#/components/schemas/Image"
+        '400':
+          description: 'Invalid parameters passed'
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/Invalid"
+        default:
+          description: 'Invalid request, unrecognized'
+          content:
+            text/plain:
+              schema:
+                type: string
+
+  /api/image/grayscale:
+    post:
+      summary: 'Returns a grayscale filtered image when called.'
+      operationId: grayscaleImage
+      requestBody:
+          description: 'Upload an Image to be manipulated'
+          required: true
+          content:
+            image/*:
+              schema:
+                $ref: "#/components/schemas/Image"
+      responses:
+        '200':
+          description: 'Manipulated image is returned'
+          content:
+            image/*:
+              schema:
+                $ref: "#/components/schemas/Image"
+        '400':
+          description: 'Invalid parameters passed'
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/Invalid"
+        default:
+          description: 'Invalid request, unrecognized'
+          content:
+            text/plain:
+              schema:
+                type: string
+
+  /api/image/resize:
+    post:
+      summary: 'Returns an image resize by pixels based on width and height when called'
+      operationId: resizeImage
+      requestBody:
+          description: 'Upload an Image to be manipulated'
+          required: true
+          content:
+            image/*:
+              schema:
+                $ref: "#/components/schemas/Image"
+      parameters:
+        - name: width
+          in: query
+          description: 'Requires the width that you want to resize the image to. Accepted values are numeric only'
+          required: true
+          schema:
+            type: integer
+        - name: height
+          in: query
+          description: 'Requires the height that you want to resize the image to. Accepted values are numeric only'
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: 'Manipulated image is returned'
+          content:
+            image/*:
+              schema:
+                $ref: "#/components/schemas/Image"
+        '400':
+          description: 'Invalid parameters passed'
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/Invalid"
+        default:
+          description: 'Invalid request, unrecognized'
+          content:
+            text/plain:
+              schema:
+                type: string
+
+  /api/image/thumbnail:
+    post:
+      summary: 'Returns a thumbnail sized image when called of size 160x108 pixels.'
+      operationId: thumbnailImage
+      requestBody:
+          description: 'Upload an Image to be manipulated'
+          required: true
+          content:
+            image/*:
+              schema:
+                $ref: "#/components/schemas/Image"
+      responses:
+        '200':
+          description: 'Manipulated image is returned'
+          content:
+            image/*:
+              schema:
+                $ref: "#/components/schemas/Image"
+        '400':
+          description: 'Invalid parameters passed'
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/Invalid"
+        default:
+          description: 'Invalid request, unrecognized'
+          content:
+            text/plain:
+              schema:
+                type: string
+
+  /api/image/flip:
+    post:
+      summary: 'Returns an image flipped either horizontally or vertically'
+      operationId: flipImage
+      requestBody:
+          description: 'Upload an Image to be manipulated'
+          required: true
+          content:
+            image/*:
+              schema:
+                $ref: "#/components/schemas/Image"
+      parameters:
+        - name: direction
+          in: query
+          description: 'Requires the direction that you want to flip the image. Accepted values are "horizontal" or "vertical"'
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 'Manipulated image is returned'
+          content:
+            image/*:
+              schema:
+                $ref: "#/components/schemas/Image"
+        '400':
+          description: 'Invalid parameters passed'
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/Invalid"
+        default:
+          description: 'Invalid request, unrecognized'
+          content:
+            text/plain:
+              schema:
+                type: string
+components:
+  schemas:
+    Image:
+        type: string
+        format: binary
+    Invalid:
+      type: string
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: basic
+security:
+  - BasicAuth: []
