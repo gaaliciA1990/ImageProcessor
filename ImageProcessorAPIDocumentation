@@ -20,7 +20,9 @@ paths:
         - name: combo
           in: query
           required: true
-          description: 'Here you will enter all of the commands you want to have applied to your image. Example of a quey with all commands listed: combo=rotate=left,degree=35,grayscale,resize=25*25,thumbnail,flip=horizontal. Valid values: rotate: "left" or "right", flip: "horizontal" or "vertical", resizie:width*height in pixels'
+          description: 'Here you will enter all of the commands you want to have applied to your image. Example of a
+          query with all commands listed: combo=rotate=left,degree=35,grayscale,resize=25*25,thumbnail,flip=horizontal.
+           Valid values: rotate: "left" or "right", flip: "horizontal" or "vertical", resize:width*height in pixels'
           schema:
             type: string
       responses:
