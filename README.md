@@ -1,7 +1,7 @@
 # Image Processor
 
 Personal project for Software Architecture and Design for the MSCS program at Seattle University.</br>
-A simple Image Processor API that accepts a bytearray image and can transform the image by any cominbination of the following: 
+A simple Image Processor API that accepts a byte array image and can transform the image by any combination of the following usinga stateless design: 
 - Rotate 90 degrees left or right
 - Rotate any degrees (still being worked on as the image is distorted out of the frame)
 - Flip horizontally or vertically
